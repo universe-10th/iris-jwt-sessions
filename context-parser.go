@@ -1,11 +1,12 @@
 package jwt_sessions
 
 import (
-	"github.com/dgrijalva/jwt-go"
-	"strings"
 	"fmt"
-	"github.com/kataras/iris"
 	"time"
+	"strings"
+	"github.com/dgrijalva/jwt-go"
+	"github.com/kataras/iris"
+	"github.com/kataras/iris/context"
 )
 
 
@@ -48,7 +49,7 @@ func fromAuthHeader(ctx iris.Context) (string, error) {
 
 
 // Parses a JWT token from a context.
-func (jwtContextParser *JWTContextParser) Parse(ctx iris.Context) (*jwt.Token, error) {
+func (jwtContextParser *JWTContextParser) Parse(ctx context.Context) (*jwt.Token, error) {
 	// Calls (or not) also this token-fetching
 	// if in an "OPTIONS"-method context.
 	if !jwtContextParser.EnableAuthOnOptions {
