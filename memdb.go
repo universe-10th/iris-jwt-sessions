@@ -28,7 +28,7 @@ func (s *MemDB) Acquire(sid string, expires time.Duration) sessions.LifeTime {
 	return sessions.LifeTime{}
 }
 
-// Do nothing, the `LifeTime` of the Session will be managed by the callers automatically on memory-based storage.
+// Do nothing, the `LifeTime` of the JWTSession will be managed by the callers automatically on memory-based storage.
 func (s *MemDB) OnUpdateExpiration(string, time.Duration) error { return nil }
 
 // immutable depends on the store, it may not implement it at all.
