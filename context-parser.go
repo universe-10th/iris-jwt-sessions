@@ -47,7 +47,7 @@ func (jwtContextParser *JWTContextParser) Parse(ctx context.Context) (*jwt.Token
 	} else if token == "" {
 		return nil, nil
 	} else {
-		if parsedToken, err := jwt.Parse(token, jwtContextParser.ValidationKeyGetter); err != nil {
+		if parsedToken, err := jwt.ParseWithClaims(token, jwt.MapClaims{}, jwtContextParser.ValidationKeyGetter); err != nil {
 			return nil, fmt.Errorf("error parsing token: %v", err)
 		} else {
 			// Check if the signing algorithm is the one we use.
