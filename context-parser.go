@@ -2,7 +2,6 @@ package jwt_sessions
 
 import (
 	"fmt"
-	"time"
 	"strings"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/kataras/iris"
@@ -15,19 +14,11 @@ type JWTContextParser struct {
 	// It can be either a shared secret or a public key.
 	// Default value: nil
 	ValidationKeyGetter jwt.Keyfunc
-	// When set, all requests with the OPTIONS method will use authentication
-	// if you enable this option you should register your route with iris.Options(...) also
-	// Default: false
-	EnableAuthOnOptions bool
 	// When set, the middelware verifies that tokens are signed with the specific signing algorithm
 	// If the signing method is not constant the ValidationKeyGetter callback can be used to implement additional checks
 	// Important to avoid security issues described here: https://auth0.com/blog/2015/03/31/critical-vulnerabilities-in-json-web-token-libraries/
 	// Default: nil
 	SigningMethod jwt.SigningMethod
-	// When set, the expiration time of token will be check every time
-	// if the token was expired, expiration error will be returned
-	// Default: false
-	Expiration bool
 }
 
 
@@ -50,14 +41,6 @@ func fromAuthHeader(ctx iris.Context) (string, error) {
 
 // Parses a JWT token from a context.
 func (jwtContextParser *JWTContextParser) Parse(ctx context.Context) (*jwt.Token, error) {
-	// Calls (or not) also this token-fetching
-	// if in an "OPTIONS"-method context.
-	if !jwtContextParser.EnableAuthOnOptions {
-		if ctx.Method() == iris.MethodOptions {
-			return nil, nil
-		}
-	}
-
 	// Extracts the token, and catch any error.
 	if token, err := fromAuthHeader(ctx); err != nil {
 		return nil, fmt.Errorf("error extracting token: %v", err)
@@ -77,18 +60,9 @@ func (jwtContextParser *JWTContextParser) Parse(ctx context.Context) (*jwt.Token
 				return nil, fmt.Errorf("error validating token algorithm: %s", message)
 			}
 
-			// Then check if the token is valid...
+			// Then check if the token is valid.
 			if !parsedToken.Valid {
 				return nil, fmt.Errorf("token is invalid")
-			}
-
-			// ...and if the token is expired.
-			if jwtContextParser.Expiration {
-				if claims, ok := parsedToken.Claims.(jwt.MapClaims); ok {
-					if expired := claims.VerifyExpiresAt(time.Now().Unix(), true); !expired {
-						return nil, fmt.Errorf("token is expired")
-					}
-				}
 			}
 
 			// Finally return the token.
