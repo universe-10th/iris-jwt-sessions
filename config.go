@@ -14,7 +14,7 @@ type (
 		AllowReclaim bool
 
 		// The JWT session parser.
-		Parser JWTContextParser
+		Parser JWTParser
 
 		// This is different with respect to cookies: expiration will be on server side,
 		// if any. Client token will not expire.
@@ -27,8 +27,10 @@ type (
 	}
 )
 
-// Validate corrects missing fields configuration fields and returns the right configuration
+
+// Validate corrects missing fields configuration fields and returns the right configuration.
 func (c Config) Validate() Config {
+	c.Parser = c.Parser.Validate()
 	if c.SessionIDGenerator == nil {
 		c.SessionIDGenerator = func() string {
 			id, _ := uuid.NewV4()
