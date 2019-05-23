@@ -9,6 +9,10 @@ import (
 type (
 	// Config is the configuration for sessions. Please read it before using sessions.
 	Config struct {
+		// Whether to reinject the new/delete the removed jwt token in the authorization
+		// header again.
+		AllowReclaim bool
+
 		// The JWT session parser.
 		Parser JWTContextParser
 
