@@ -43,7 +43,7 @@ func (sessions *JWTSessions) updateJWT(ctx context.Context, sessionID string, ex
 	})
 
 	if (sessions.config.AllowReclaim) {
-		serialized, _ := token.SignedString("foo")
+		serialized, _ := sessions.config.Parser.Serialize(token)
 		if serialized != "" {
 			if sessions.config.AllowReclaim {
 				ctx.Request().Header.Set("Authorization", "Bearer " + serialized)
