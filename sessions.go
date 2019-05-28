@@ -48,7 +48,7 @@ func (sessions *JWTSessions) updateJWT(ctx context.Context, sessionID string, ex
 			if sessions.config.AllowReclaim {
 				ctx.Request().Header.Set("Authorization", "Bearer " + serialized)
 			}
-			ctx.Header("Authorization", "Bearer" + serialized)
+			ctx.Header("Authorization", "Bearer " + serialized)
 		}
 	}
 }
